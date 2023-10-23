@@ -37,10 +37,10 @@ body {
 }
 
 .viajes__navbar__ul {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
 }
 
 .nav-item__li {
@@ -48,13 +48,13 @@ body {
 }
 
 .nav-link__a {
-    /*border: 2px solid #fff;*/
-    padding: 6px 10px;
-    border-radius: 14px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /*border: 2px solid #fff;*/
+  padding: 6px 10px;
+  border-radius: 14px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .nav-link__a {
@@ -103,53 +103,70 @@ body {
 }
 
 .button__nuevo {
-    position: relative;
-    padding: 10px 20px;
-    text-decoration: none;
-    overflow: hidden;
-    border: none;
-    border-radius: 35px;
-    background-image: linear-gradient(90deg, #89f661, #26b9ff);
-    color: #3d3935;
-    font-weight: 700;
-    font-size: 1rem;
-    outline: none;
-    cursor: pointer;
-  }
-  .button__nuevo:hover {
-    box-shadow: 0px 0px 20px -5px rgba(0, 0, 0, .2);
-  }
-  .button__nuevo::before {
-    opacity: 0;
-    position: absolute;
-    top: calc(100% * var(--ripple-y));
-    left: calc(100% * var(--ripple-x));
-    transform: translate(-50%, -50%) scale(1);
-    padding: 50%;
-    border-radius: 50%;
-    background-color: #fff;
-    content: '';
-    transition: transform 1s, opacity 1s;
-  }
-  .button:active::before {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0);
-    transition: 0s;
-  }
-  .button__nuevo::after {
-    opacity: 0;
-    position: absolute;
-    top: calc(100% * var(--ripple-y));
-    left: calc(100% * var(--ripple-x));
-    transform: translate(-50%, -50%) scale(1);
-    padding: 50%;
-    border-radius: 50%;
-    background-color: #fff;
-    content: '';
-    transition: transform 2s, opacity 2s;
-  }
-  .button__nuevo:active::after {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0);
-    transition: 0s;
-  }
+  position: relative;
+  padding: 10px 20px;
+  text-decoration: none;
+  overflow: hidden;
+  border: none;
+  border-radius: 35px;
+  background-image: linear-gradient(90deg, #89f661, #26b9ff);
+  color: #3d3935;
+  font-weight: 700;
+  font-size: 1rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.button__nuevo:hover {
+  box-shadow: 0px 0px 20px -5px rgba(0, 0, 0, .2);
+}
+
+.button__nuevo::before {
+  opacity: 0;
+  position: absolute;
+  top: calc(100% * var(--ripple-y));
+  left: calc(100% * var(--ripple-x));
+  transform: translate(-50%, -50%) scale(1);
+  padding: 50%;
+  border-radius: 50%;
+  background-color: #fff;
+  content: '';
+  transition: transform 1s, opacity 1s;
+}
+
+.button:active::before {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(0);
+  transition: 0s;
+}
+
+.button__nuevo::after {
+  opacity: 0;
+  position: absolute;
+  top: calc(100% * var(--ripple-y));
+  left: calc(100% * var(--ripple-x));
+  transform: translate(-50%, -50%) scale(1);
+  padding: 50%;
+  border-radius: 50%;
+  background-color: #fff;
+  content: '';
+  transition: transform 2s, opacity 2s;
+}
+.button__nuevo:active::after {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(0);
+  transition: 0s;
+}
+
+.button__nuevo__contecnt {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.title {
+  color: #fff;
+  font-weight: 700;
+  font-size: 2rem;
+}
