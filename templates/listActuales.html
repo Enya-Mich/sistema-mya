@@ -13,34 +13,35 @@
 </head>
 <body>
     <!-- Barra superior con el logo -->
-    <nav class="viajes__navbar">
+    <nav class="navbar navbar-expand-lg viajes__navbar">
         <div class="container-fluid">
             <a class="navbar-brand row align-items-center" href="/viajes">
                 <img src="{{ user_image }}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top col">
-                <div class="viajes__navbar__title">
+                <div class="col">
                     <h4>Sistema de alerta</h4>
                     <h4>de embarrancamiento</h4>
                 </div>
+                
             </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="viajes__navbar__ul">
+            <ul class="navbar-nav justify-content-end">
               <li class="nav-item">
-                <a class="nav-link__a active" aria-current="page" href="/viajes">En carretera</a>
+                <a class="nav-link active" aria-current="page" href="/viajes">En carretera</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link__a" href="/completados">Completados</a>
+                <a class="nav-link" href="/completados">Completados</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link__a" href="/usuarios">Usuarios</a>
+                <a class="nav-link" href="/usuarios">Usuarios</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link__a" aria-current="page" href="/predmanual">Prediccion Manual</a>
+                <a class="nav-link" aria-current="page" href="/predmanual">Prediccion Manual</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link__a" aria-current="page" href="/verUbicaciones">Mapa General</a>
+                <a class="nav-link" aria-current="page" href="/verUbicaciones">Mapa General</a>
               </li>
               <li class="nav-item">
                 <a class=" btn btn-danger" role="button" href="/cerrar_sesion">Cerrar Sesion</a>

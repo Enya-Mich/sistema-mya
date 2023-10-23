@@ -68,9 +68,6 @@ body {
     cursor: pointer;
   }
   .nav-link__a::before {
-    
-  }
-  .nav-link__a:hover::before {
     position: absolute;
     top: 0;
     left: 0;
