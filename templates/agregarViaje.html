@@ -1,0 +1,279 @@
+<!DOCTYPE html5>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andministrador</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <script src="{{ url_for('static', filename='js/socket_4_3_2.io.min.js') }}"></script> <!-- Ruta correcta al archivo socket.io.js -->
+
+
+</head>
+<body>
+    <!-- Barra superior con el logo -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #2f9742;">
+        <div class="container-fluid">
+            <a class="navbar-brand row align-items-center" href="/viajes">
+                <img src="{{ user_image }}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top col">
+                <div class="col">
+                    <h4>Sistema de alerta</h4>
+                    <h4>de embarrancamiento</h4>
+                </div>
+                
+            </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav justify-content-end">
+              <li class="nav-item">
+                <a class="nav-link" href="/viajes">En carretera</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/completados">Completados</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/usuarios">Usuarios</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="/predmanual">Prediccion Manual</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="/verUbicaciones">Mapa General</a>
+              </li>
+              <li class="nav-item">
+                <a class=" btn btn-danger" role="button" href="/cerrar_sesion">Cerrar Sesion</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <br/>
+        <h2 class="text-center my-2 py-2">REGISTRAR NUEVO VIAJE</h2>
+        <br/>
+
+        <div class="col-md-6">
+            <form class="justify-content-center" action="/crearViaje" method="POST">
+
+                <div class="mb-3 row justify-content-center">
+                    <label for="origen" class="form-label justify-content-center">Punto de Partida</label>
+                    <select class="form-select" aria-label="Default select example" name="origen">
+                        <option selected>Seleccione el punto de Partida</option>
+                        <option value="La Paz">La Paz</option>
+                        <option value="Irupana">Irupana</option>
+                    </select>
+                </div>
+                <div class="mb-3 row justify-content-center">
+                    <label for="fechaViaje" class="form-label justify-content-center">Fecha del Viaje</label>
+                    <input type="text" class="form-control" id="fechaViaje" name="fechaViaje" placeholder="Ingresa la Fecha" value="{{fecha}}" readonly>
+                </div>
+                <div class="mb-3 row justify-content-center">
+                    <label for="horaPartida" class="form-label justify-content-center">Hora de Partida Prevista</label>
+                    <input type="time" class="form-control" id="horaPartida" name="horaPartida" placeholder="Ingresa la hora prevista">
+                </div>
+                <div class="mb-3 row justify-content-center">
+                    <label for="cantidadPasajeros" class="form-label justify-content-center">Cantidad de Pasajeros Incial</label>
+                    <input type="number" class="form-control" id="cantidadPasajeros" name="cantidadPasajeros" placeholder="Ingresa la cantidad de pasajeros inicial">
+                </div>
+                
+                <div class="mb-3 row justify-content-center">
+                    <label for="idAuto" class="form-label justify-content-center">Seleccione el conductor a cargo del viaje</label>
+                    <select class="form-select" aria-label="Default select example" name="idAuto">
+                        <option selected>Seleccione el conductor a cargo</option>
+                        {% for aut in datosAut %}
+
+                            <option value={{aut.id_auto}}>{{aut.conductor}} {{aut.placa}}</option>
+
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Registrar Viaje</button>
+            </form>
+        </div>
+
+        
+
+        
+    </div>
+
+    <!-- Modal de Bootstrap para mostrar notificaciones -->
+    <div class="modal fade" id="notificacionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header bg-warning text-dark">
+                
+                  <h3 class="modal-title">Notificación de Posible Accidente</h3>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                
+              </div>
+              <div class="modal-body">
+                  <img src="{{ url_for('static', filename='IMG/alerta.png') }}" alt="Logo" width="170" height="170" class="">
+                  <p id="notificacionTexto1">El viaje a cargo del conductor:</p>
+                  <p id="nom_cond"></p>
+                  <p id="notificacionTexto2">Tiene un retraso de más de 15 minutos de tiempo en el siguiete punto de control</p>
+                  <p id="notificacionTexto3">Su ultimo reporte fue a horas:</p>
+                  <p id="hora_reporte"></p>
+                  <p id="notificacionTexto4">Y su ultima ubicacion registrada es:</p>
+                  <p id="ubicacion_reporte"></p>
+                  <p id="notificacionTexto5">El viaje tenia a parte del conductor la siguiente cantidad de pasajeros:</p>
+                  <p id="cantidad_pasajeros"></p>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Modal de Bootstrap para mostrar notificaciones -->
+  <div class="modal fade" id="notificacionModalEmb" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-dark">
+                <h3 class="modal-title">Alerta de embarrancamiento</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img src="{{ url_for('static', filename='IMG/emergencia1.png') }}" alt="Logo" width="170" height="170" class="">
+                <img src="{{ url_for('static', filename='IMG/emergencia2.png') }}" alt="Logo" width="170" height="170" class="">
+                <p id="notificacionTexto1">El viaje a cargo del conductor:</p>
+                <p id="nom_cond"></p>
+                <p id="notificacionTexto2">Tiene un retraso de más de 15 minutos y hay una alta probabilidad de que este embarrancado</p>
+                <p id="notificacionTexto3">Su ultimo reporte fue a horas:</p>
+                <p id="hora_reporte"></p>
+                <p id="notificacionTexto4">Y su ultima ubicacion registrada es:</p>
+                <p id="ubicacion_reporte"></p>
+                <p id="notificacionTexto5">El viaje tenia a parte del conductor la siguiente cantidad de pasajeros:</p>
+                <p id="cantidad_pasajeros"></p>
+                <h4 id="notificacionTexto5">Se recomienda buscar el auto detenidamente</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //function escucha_alertas() {
+      //var socket = io.connect('http://' + document.domain + ':' + location.port);
+      /*socket.on('connect', function() {
+          console.log('Conexión exitosa al servidor Socket.IO');
+      });*/
+      /*console.log("Viendo si funciona los sockets");
+      console.log(socket);*/
+
+      var socket = io.connect('http://' + document.domain + ':' + location.port);
+          console.log(socket);
+
+          console.log("Viendo si funciona los sockets");
+      console.log(socket);
+
+          // Manejar eventos de Socket.IO
+          socket.on('envio_datos', function(datos_para_enviar) {
+              // Limpiar marcadores existentes en el mapa
+              // Implementa la lógica para limpiar los marcadores en el mapa
+
+              // Agregar nuevos marcadores según las ubicaciones actualizadas
+              console.log("Ubicaciones recibidas mediante socket")
+              console.log(datos_para_enviar.mostrar)
+              console.log(datos_para_enviar.ultima_ubicacion)
+              var mensajito = ''
+              if(datos_para_enviar.mostrar){
+                mensajito = 'Llegaron los datos'
+                var nombre_conductor = datos_para_enviar.nombre_conductor
+                var pasajeros = datos_para_enviar.pasajeros
+                var ultima_hora = datos_para_enviar.ultima_hora
+                var ultima_ubicacion = datos_para_enviar.ultima_ubicacion
+                var tipo_alerta = datos_para_enviar.tipo_alerta
+                console.log(nombre_conductor)
+                console.log(pasajeros)
+                console.log(ultima_hora)
+                console.log(ultima_ubicacion)
+                console.log(tipo_alerta)
+                var tipo_modal = "";
+                console.log("El socket entro correctamente");
+        
+                if(tipo_alerta==1){
+                  tipo_modal = "#notificacionModalEmb";
+                }else{
+                  tipo_modal = "#notificacionModal";
+                }
+        
+                console.log("El socket entro correctamente");
+        
+                // Actualiza el contenido del modal con la notificación recibida
+                //var modalTitulo = document.querySelector('#notificacionModal .modal-title');
+                var nombreTexto = document.querySelector('#nom_cond');
+                var horaTexto = document.querySelector('#hora_reporte');
+                var ubicacionTexto = document.querySelector('#ubicacion_reporte');
+                var pasajerosTexto = document.querySelector('#cantidad_pasajeros');
+        
+                //modalTitulo.textContent = 'ID: ' + id + ', Tipo: ' + tipo;
+                //modalTexto.textContent = mensaje;
+        
+                nombreTexto.textContent = nombre_conductor;
+                horaTexto.textContent = ultima_hora;
+                ubicacionTexto.textContent = ultima_ubicacion;
+                pasajerosTexto.textContent = pasajeros;
+        
+        
+                // Muestra el modal
+                $(tipo_modal).modal('show');
+        
+                // Oculta el modal después de 10 segundos
+                setTimeout(function() {
+                    $(tipo_modal).modal('hide');
+                }, 100000);  // 10 segundos (10000 milisegundos)
+                socket.emit('datos_recibidos', mensajito)
+              }else{
+                mensajito = 'No hacer nada'
+                socket.emit('datos_recibidos',mensajito)
+              }
+            
+          });
+</script>
+
+<script>/*
+  var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+  socket.on('notificacion', function(data) {
+      var ultima_hora = data.ultima_hora;
+      var ultima_ubicacion = data.ultima_ubicacion;
+      var nombre_conductor = data.nombre;
+      var pasajeros_cant = data.pasajeros;
+
+      console.log("El socket entro correctamente")
+
+      // Actualiza el contenido del modal con la notificación recibida
+      //var modalTitulo = document.querySelector('#notificacionModal .modal-title');
+      var nombreTexto = document.querySelector('#nom_cond');
+      var horaTexto = document.querySelector('#hora_reporte');
+      var ubicacionTexto = document.querySelector('#ubicacion_reporte');
+      var pasajerosTexto = document.querySelector('#cantidad_pasajeros');
+
+      //modalTitulo.textContent = 'ID: ' + id + ', Tipo: ' + tipo;
+      //modalTexto.textContent = mensaje;
+
+      nombreTexto.textContent = nombre_conductor;
+      horaTexto.textContent = ultima_hora;
+      ubicacionTexto.textContent = ultima_ubicacion;
+      pasajerosTexto.textContent = pasajeros_cant;
+
+
+      // Muestra el modal
+      $('#notificacionModal').modal('show');
+
+      // Oculta el modal después de 10 segundos
+      setTimeout(function() {
+          $('#notificacionModal').modal('hide');
+      }, 10000);  // 10 segundos (10000 milisegundos)
+  });*/
+
+</script>
+   
+
+    <!-- Scripts de Bootstrap y cualquier otro script personalizado >
+    <script src="tu-archivo-bootstrap.js"></script>
+    <script src="tu-archivo-personalizado.js"></script-->
+      <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/code.jquery.com_jquery-3.7.1.min.js') }}"></script>
+</body>
+</html>

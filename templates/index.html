@@ -1,0 +1,60 @@
+<!DOCTYPE html5>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesion</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<body>
+    <!-- Barra superior con el logo -->
+    <div class="degrase"></div>
+    <!-- Barra superior con el logo -->
+    <nav class="navbar">
+        <div class="navbar__container">
+            <a class="navbar__a" href="#">
+                <img src="{{ user_image }}" alt="Logo" width="30" height="30" class="navbar__img">
+            </a>
+            <a class="navbar__a" href="#">
+                Sistema de alerta ante posible embarrancamiento
+            </a>
+            <!--span class="navbar-text">
+                Sistema de alerta de emebarrancamiento
+            </span-->
+        </div>
+    </nav>
+
+    <!-- Contenedor principal -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <!-- Formulario de inicio de sesión -->
+                <div class="container__title">
+                    <h1 class="title"> Iniciar Sesión </h1>
+                </div>
+                <div class="container__form">
+                    <form class="form" action="/iniciarSesion" method="POST">
+                        <div class="form__field__container">
+                            <div class="form__field">
+                                <label for="usuario" class="form__label">Usuario</label>
+                                <input type="text" class="form__input" id="usuario" name="usuario" placeholder="Ingresa tu usuario">
+                            </div>
+                            <div class="form__field">
+                                <label for="contraseña" class="form__label">Contraseña</label>
+                                <input type="password" class="form__input" id="contrasena" name="contrasena" placeholder="Ingresa tu contraseña">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de Bootstrap y cualquier otro script personalizado >
+    <script src="tu-archivo-bootstrap.js"></script>
+    <script src="tu-archivo-personalizado.js"></script-->
+</body>
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html5>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <script src="{{ url_for('static', filename='js/socket_4_3_2.io.min.js') }}"></script> <!-- Ruta correcta al archivo socket.io.js -->
+
+    <style>
+      /* Estilos CSS básicos para el diseño */
+      
+      #map {
+          height: 400px;
+          width: 100%;
+          margin-bottom: 20px;
+      }
+
+  </style>
+
+</head>
+<body>
+    <!-- Barra superior con el logo -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #2f9742;">
+        <div class="container-fluid">
+            <a class="navbar-brand row align-items-center" href="/viajes">
+                <img src="{{ user_image }}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top col">
+                <div class="col">
+                    <h4>Sistema de alerta</h4>
+                    <h4>de embarrancamiento</h4>
+                </div>
+                
+            </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav justify-content-end">
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="/viajes">En carretera</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/completados">Completados</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/usuarios">Usuarios</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="/predmanual">Prediccion Manual</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/verUbicaciones">Mapa General</a>
+              </li>
+              <li class="nav-item">
+                <a class=" btn btn-danger" role="button" href="/cerrar_sesion">Cerrar Sesion</a>
+              </li>
+              
+            </ul>
+          </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <br/>
+        <h2 class="text-center my-2 py-2">UBICACIONES DE LOS VIAJES</h2>
+        <br/>
+
+        <h3 class="">Clima actual de la ciudad</h1>
+        <div id="clima" class="container"></div>
+        <br/>
+        <br/>
+
+
+        
+        <!-- Mapa para mostrar la ubicación -->
+        <div id="map"></div>
+
+    </div>
+
+    <script>
+        function initMap() {
+            var myLatLng = {lat: -16.453590, lng: -67.797816};  // Latitud y longitud inicial
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 8,
+                center: myLatLng
+            });
+            var marcadores = {};  // Objeto para almacenar los marcadores
+            var direcciones_coches = ["{{ url_for('static', filename='IMG/coche_1.png') }}","{{ url_for('static', filename='IMG/coche_2.png') }}","{{ url_for('static', filename='IMG/coche_3.png') }}","{{ url_for('static', filename='IMG/coche_4.png') }}","{{ url_for('static', filename='IMG/coche_5.png') }}","{{ url_for('static', filename='IMG/coche_6.png') }}"];
+            console.log(direcciones_coches[0])
+            function getRandomInt(max) {
+                return Math.floor(Math.random() * max);
+            };
+
+            var casetaIcono = {
+                url: "{{ url_for('static', filename='IMG/caseta.png') }}",
+                scaledSize: new google.maps.Size(40, 40),
+            };
+
+
+            var latitudes = "{{latitudes}}"
+            var longitudes = "{{longitudes}}"
+            latitudes = latitudes.slice(1,-1)
+            longitudes = longitudes.slice(1,-1)
+            latitudes = latitudes.split(",")
+            longitudes = longitudes.split(",")
+
+            for(i=0;i<11;i++){
+                latitudes[i] = parseFloat(latitudes[i]),
+                longitudes[i] = parseFloat(longitudes[i]),
+                console.log(latitudes[i]),
+                console.log(longitudes[i])
+            };
+
+            for(i=0;i<11;i++){
+                var marker_caseta = new google.maps.Marker({
+                position: { lat: latitudes[i], lng: longitudes[i] },
+                map: map,
+                title: 'marcador ID: ' + i,
+                icon: casetaIcono
+            });
+            }
+
+            var marker1 = new google.maps.Marker({
+                position: { lat: -16.537835, lng: -68.087510 },
+                map: map,
+                title: 'Caseta ID: ' + 12,
+                icon: casetaIcono
+            });
+
+            var marker2 = new google.maps.Marker({
+                position: { lat: -16.536264, lng: -68.086835 },
+                map: map,
+                title: 'Caseta ID: ' + 13,
+                icon: casetaIcono
+            });
+
+            var marker3 = new google.maps.Marker({
+                position: { lat: -16.534927, lng: -68.086476 },
+                map: map,
+                title: 'Caseta ID: ' + 14,
+                icon: casetaIcono
+            });
+
+            var marker4 = new google.maps.Marker({
+                position: { lat: -16.533322, lng: -68.086227 },
+                map: map,
+                title: 'Caseta ID: ' + 15,
+                icon: casetaIcono
+            });
+
+            var socket_2 = io.connect('http://' + document.domain + ':' + location.port);
+            console.log(socket_2);
+
+            // Manejar eventos de Socket.IO
+            socket_2.on('ubicaciones_actualizadas', function(usuarios_ubicaciones) {
+                // Limpiar marcadores existentes en el mapa
+                // Implementa la lógica para limpiar los marcadores en el mapa
+
+                // Agregar nuevos marcadores según las ubicaciones actualizadas
+                console.log("Ubicaciones recibidas mediante socket")
+                for (var usuario_id in usuarios_ubicaciones) {
+                    var ubicacion = usuarios_ubicaciones[usuario_id];
+                    var coche_id = getRandomInt(6);
+                    var carIcon = {
+                        url: direcciones_coches[coche_id],
+                        scaledSize: new google.maps.Size(40, 40),
+                    };
+                    if (marcadores[usuario_id]) {
+                        // Si el marcador ya existe, moverlo a la nueva ubicación
+                        marcadores[usuario_id].setPosition(new google.maps.LatLng(ubicacion.latitud, ubicacion.longitud));
+                    } else {
+                        // Si el marcador no existe, crear uno nuevo
+                        var marker = new google.maps.Marker({
+                            position: { lat: ubicacion.latitud, lng: ubicacion.longitud },
+                            map: map,
+                            title: 'Usuario ID: ' + usuario_id,
+                            icon: carIcon
+                        });
+
+                        var contenidoInfoWindow = 'Usuario ID: ' + usuario_id + '<br/>Nombre Conductor: ' + ubicacion.nombre_c+'<br/>Origen: '+ubicacion.origen+'<br/>Destino: '+ubicacion.destino;
+                        var infoWindow = new google.maps.InfoWindow({
+                            content: contenidoInfoWindow
+                        });
+
+                        marker.addListener('mouseover', function() {
+                            infoWindow.open(map, marker); // Abre la ventana de información en el mapa en la posición del marcador
+                        });
+
+                        // También puedes agregar un evento 'mouseout' para cerrar la ventana de información cuando el mouse se aleje del marcador
+                        marker.addListener('mouseout', function() {
+                            infoWindow.close(); // Cierra la ventana de información
+                        });
+
+
+
+                        // Almacenar el marcador en el objeto de marcadores
+                        marcadores[usuario_id] = marker;
+                    }
+                    /*var marker = new google.maps.Marker({
+                        position: { lat: ubicacion.latitud, lng: ubicacion.longitud },
+                        map: map,
+                        title: 'Usuario ' + usuario_id
+                    });*/
+                }
+            });
+
+            var watchId = null; // Variable para almacenar el ID de seguimiento
+            var intervalId = null; // Variable para almacenar el ID del intervalo
+            var usuarioMarcador = null; // Variable para almacenar el marcador del usuario
+            //var id_viaj = {{ id_viaje }};
+
+            // Función para iniciar la actualización de la ubicación
+            /*function startLocationUpdates() {
+                watchId = navigator.geolocation.watchPosition(function(position) {
+                    var userLatLng = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    map.setCenter(userLatLng);
+                    // Borrar el marcador anterior si existe
+                    if (usuarioMarcador) {
+                        usuarioMarcador.setMap(null);
+                    }
+
+                    var carIcon = {
+                        url: "{{ url_for('static', filename='IMG/coche_1.png') }}",
+                        scaledSize: new google.maps.Size(40, 40),
+                    };
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    document.getElementById("coordinates").innerHTML = `Latitud: ${latitude.toFixed(6)}, Longitud: ${longitude.toFixed(6)}`;
+                        
+                    var usuarioMarcador = new google.maps.Marker({
+                        position: userLatLng,
+                        map: map,
+                        title: 'Tu ubicación',
+                        icon: carIcon
+                    });
+
+                    // Envia datos de ubicación al servidor Flask
+                    //sendLocationToServer(userLatLng.lat, userLatLng.lng);
+                });
+            }
+
+            startLocationUpdates();*/
+            /*https://cdn.socket.io/4.0.0/socket.io.min.js*/
+        }
+
+    </script>
+
+    <!-- Modal de Bootstrap para mostrar notificaciones -->
+    <div class="modal fade" id="notificacionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                  
+                    <h3 class="modal-title">Notificación de Posible Accidente</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  
+                </div>
+                <div class="modal-body">
+                    <img src="{{ url_for('static', filename='IMG/alerta.png') }}" alt="Logo" width="170" height="170" class="">
+                    <p id="notificacionTexto1">El viaje a cargo del conductor:</p>
+                    <p id="nom_cond"></p>
+                    <p id="notificacionTexto2">Tiene un retraso de más de 15 minutos de tiempo en el siguiete punto de control</p>
+                    <p id="notificacionTexto3">Su ultimo reporte fue a horas:</p>
+                    <p id="hora_reporte"></p>
+                    <p id="notificacionTexto4">Y su ultima ubicacion registrada es:</p>
+                    <p id="ubicacion_reporte"></p>
+                    <p id="notificacionTexto5">El viaje tenia a parte del conductor la siguiente cantidad de pasajeros:</p>
+                    <p id="cantidad_pasajeros"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Bootstrap para mostrar notificaciones -->
+    <div class="modal fade" id="notificacionModalEmb" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header bg-danger text-dark">
+                  <h3 class="modal-title">Alerta de embarrancamiento</h3>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <img src="{{ url_for('static', filename='IMG/emergencia1.png') }}" alt="Logo" width="170" height="170" class="">
+                  <img src="{{ url_for('static', filename='IMG/emergencia2.png') }}" alt="Logo" width="170" height="170" class="">
+                  <p id="notificacionTexto1">El viaje a cargo del conductor:</p>
+                  <p id="nom_cond"></p>
+                  <p id="notificacionTexto2">Tiene un retraso de más de 15 minutos y hay una alta probabilidad de que este embarrancado</p>
+                  <p id="notificacionTexto3">Su ultimo reporte fue a horas:</p>
+                  <p id="hora_reporte"></p>
+                  <p id="notificacionTexto4">Y su ultima ubicacion registrada es:</p>
+                  <p id="ubicacion_reporte"></p>
+                  <p id="notificacionTexto5">El viaje tenia a parte del conductor la siguiente cantidad de pasajeros:</p>
+                  <p id="cantidad_pasajeros"></p>
+                  <h4 id="notificacionTexto5">Se recomienda buscar el auto detenidamente</h4>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <script>
+    //function escucha_alertas() {
+      //var socket = io.connect('http://' + document.domain + ':' + location.port);
+      /*socket.on('connect', function() {
+          console.log('Conexión exitosa al servidor Socket.IO');
+      });*/
+      /*console.log("Viendo si funciona los sockets");
+      console.log(socket);*/
+  
+      var socket = io.connect('http://' + document.domain + ':' + location.port);
+          console.log(socket);
+  
+          console.log("Viendo si funciona los sockets");
+      console.log(socket);
+  
+          // Manejar eventos de Socket.IO
+          socket.on('envio_datos', function(datos_para_enviar) {
+              // Limpiar marcadores existentes en el mapa
+              // Implementa la lógica para limpiar los marcadores en el mapa
+  
+              // Agregar nuevos marcadores según las ubicaciones actualizadas
+              console.log("Ubicaciones recibidas mediante socket")
+              console.log(datos_para_enviar.mostrar)
+              console.log(datos_para_enviar.ultima_ubicacion)
+              var mensajito = ''
+              if(datos_para_enviar.mostrar){
+                mensajito = 'Llegaron los datos'
+                var nombre_conductor = datos_para_enviar.nombre_conductor
+                var pasajeros = datos_para_enviar.pasajeros
+                var ultima_hora = datos_para_enviar.ultima_hora
+                var ultima_ubicacion = datos_para_enviar.ultima_ubicacion
+                var tipo_alerta = datos_para_enviar.tipo_alerta
+                console.log(nombre_conductor)
+                console.log(pasajeros)
+                console.log(ultima_hora)
+                console.log(ultima_ubicacion)
+                console.log(tipo_alerta)
+                var tipo_modal = "";
+                console.log("El socket entro correctamente");
+        
+                if(tipo_alerta==1){
+                  tipo_modal = "#notificacionModalEmb";
+                }else{
+                  tipo_modal = "#notificacionModal";
+                }
+        
+                console.log("El socket entro correctamente");
+        
+                // Actualiza el contenido del modal con la notificación recibida
+                //var modalTitulo = document.querySelector('#notificacionModal .modal-title');
+                var nombreTexto = document.querySelector('#nom_cond');
+                var horaTexto = document.querySelector('#hora_reporte');
+                var ubicacionTexto = document.querySelector('#ubicacion_reporte');
+                var pasajerosTexto = document.querySelector('#cantidad_pasajeros');
+        
+                //modalTitulo.textContent = 'ID: ' + id + ', Tipo: ' + tipo;
+                //modalTexto.textContent = mensaje;
+        
+                nombreTexto.textContent = nombre_conductor;
+                horaTexto.textContent = ultima_hora;
+                ubicacionTexto.textContent = ultima_ubicacion;
+                pasajerosTexto.textContent = pasajeros;
+        
+        
+                // Muestra el modal
+                $(tipo_modal).modal('show');
+        
+                // Oculta el modal después de 10 segundos
+                setTimeout(function() {
+                    $(tipo_modal).modal('hide');
+                }, 100000);  // 10 segundos (10000 milisegundos)
+                socket.emit('datos_recibidos', mensajito)
+              }else{
+                mensajito = 'No hacer nada'
+                socket.emit('datos_recibidos',mensajito)
+              }
+            
+          });
+  </script>
+
+</script>
+   
+
+<!-- Scripts de Bootstrap y cualquier otro script personalizado >
+<script src="tu-archivo-bootstrap.js"></script>
+<script src="tu-archivo-personalizado.js"></script-->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/code.jquery.com_jquery-3.7.1.min.js') }}"></script>
+<script>
+    const ciudadId = "3911925"; // Reemplaza 'CITY_ID' con el ID de la ciudad que deseas consultar
+    const apiKey = "13c065e6f69c21927ac4f66b8f7ddf9e"; // Reemplaza 'TU_API_KEY' con tu clave de API de OpenWeatherMap
+
+fetch(`https://api.openweathermap.org/data/2.5/weather?id=${ciudadId}&appid=${apiKey}&units=metric`)
+  .then(response => response.json())
+  .then(data => {
+      const temperatura = data.main.temp;
+      var descripcionClima = data.weather[0].description;
+      descripcionClima = descripcionClima.toString()
+      const ubicacion = data.name;
+        if(descripcionClima=='clear sky'){
+            descripcionClima = 'Soleado'
+        }else if (descripcionClima=='few clouds') {
+            descripcionClima = 'Soleado'
+        }else if (descripcionClima=='scattered clouds') {
+            descripcionClima = 'Soleado'
+        }else if (descripcionClima=='broken clouds') {
+            descripcionClima = 'Ventoso'
+        }else if (descripcionClima=='overcast clouds') {
+            descripcionClima = 'Nublado'
+        }else if (descripcionClima=='mist') {
+            descripcionClima = 'Niebla'
+        }else if (descripcionClima=='fog') {
+            descripcionClima = 'Niebla'
+        }else if (descripcionClima=='light rain') {
+            descripcionClima = 'Lluvioso'
+        }else if (descripcionClima=='moderate rain') {
+            descripcionClima = 'Lluvioso'
+        }else if (descripcionClima=='heavy rain') {
+            descripcionClima = 'Lluvioso'
+        }else if (descripcionClima=='light snow') {
+            descripcionClima = 'Nieve'
+        }else if (descripcionClima=='moderate snow') {
+            descripcionClima = 'Nieve'
+        }else if (descripcionClima=='heavy snow') {
+            descripcionClima = 'Nieve'
+        }else if (descripcionClima=='thunderstorm') {
+            descripcionClima = 'Tormenta electrica'
+        }else if (descripcionClima=='drizzle') {
+            descripcionClima = 'Lluvioso'
+        }else if (descripcionClima=='freezing rain') {
+            descripcionClima = 'Granizo'
+        }else if (descripcionClima=='sleet') {
+            descripcionClima = 'Granizo'
+        }else {
+            descripcionClima = 'Ventoso'
+        }
+
+      const climaDiv = document.getElementById("clima");
+      climaDiv.innerHTML = `<p>Clima en ${ubicacion}: ${temperatura}°C, ${descripcionClima}</p>`;
+  })
+  .catch(error => {
+      console.error("Error al obtener datos del clima", error);
+      const climaDiv = document.getElementById("clima");
+      climaDiv.innerHTML = "<p>Error al obtener datos del clima. Por favor, verifica el ID de la ciudad.</p>";
+  });
+</script>
+
+  <script>/*
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    socket.on('notificaciones', function(data) {
+        var ultima_hora = data.ultima_hora;
+        var ultima_ubicacion = data.ultima_ubicacion;
+        var nombre_conductor = data.nombre;
+        var pasajeros_cant = data.pasajeros;
+
+        console.log("El socket entro correctamente")
+
+        // Actualiza el contenido del modal con la notificación recibida
+        //var modalTitulo = document.querySelector('#notificacionModal .modal-title');
+        var nombreTexto = document.querySelector('#nom_cond');
+        var horaTexto = document.querySelector('#hora_reporte');
+        var ubicacionTexto = document.querySelector('#ubicacion_reporte');
+        var pasajerosTexto = document.querySelector('#cantidad_pasajeros');
+
+        //modalTitulo.textContent = 'ID: ' + id + ', Tipo: ' + tipo;
+        //modalTexto.textContent = mensaje;
+
+        nombreTexto.textContent = nombre_conductor;
+        horaTexto.textContent = ultima_hora;
+        ubicacionTexto.textContent = ultima_ubicacion;
+        pasajerosTexto.textContent = pasajeros_cant;
+
+
+        // Muestra el modal
+        $('#notificacionModal').modal('show');
+
+        // Oculta el modal después de 10 segundos
+        setTimeout(function() {
+            $('#notificacionModal').modal('hide');
+        }, 10000);  // 10 segundos (10000 milisegundos)
+    });*/
+
+</script>
+
+    <!-- Agregar la clave de API de Google Maps -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXaIek17wzntc1TxDQCGsY_NeUsDn5VsE&callback=initMap" async defer></script>
+   
+   
+
+    <!-- Scripts de Bootstrap y cualquier otro script personalizado >
+    <script src="tu-archivo-bootstrap.js"></script>
+    <script src="tu-archivo-personalizado.js"></script-->
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/code.jquery.com_jquery-3.7.1.min.js') }}"></script>
+</body>
+</html>
