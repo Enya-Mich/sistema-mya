@@ -9,6 +9,7 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
 }
+
 .degrase {
     position: absolute;
     left: 0;
@@ -19,6 +20,9 @@ body {
     background-color: hsla(0, 2%, 12%, 0.918);
 }
 
+.icon__toggler {
+  color: #fff;
+}
 
 
 .viajes__navbar {
@@ -54,33 +58,34 @@ body {
 }
 
 .nav-link__a {
-    position: relative;
-    z-index: 10;
-    /*border: 1px solid rgba(255, 255, 255, .5);*/
-    border-radius: 30px;
-    /*ackground-color: rgba(255, 255, 255, .1);*/
-    color: #fff;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    outline: none;
-    cursor: pointer;
-  }
-  .nav-link__a::before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    width: 100%;
-    height: 30px;
-    border-radius: 50px;
-    background-color: #0cbcf2;
-    filter: blur(10px);
-    content: "";
-    transition: .5s;
-    transform: scale(1.1);
-  }
+  position: relative;
+  z-index: 10;
+  /*border: 1px solid rgba(255, 255, 255, .5);*/
+  border-radius: 30px;
+  /*ackground-color: rgba(255, 255, 255, .1);*/
+  color: #fff;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  outline: none;
+  cursor: pointer;
+}
+
+.nav-link__a:hover::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 100%;
+  height: 30px;
+  border-radius: 50px;
+  background-color: #0cbcf2;
+  filter: blur(10px);
+  content: "";
+  transition: .5s;
+  transform: scale(1.1);
+}
 
 .active::before {
     position: absolute;
@@ -106,7 +111,7 @@ body {
     border-radius: 35px;
     background-image: linear-gradient(90deg, #89f661, #26b9ff);
     color: #3d3935;
-    font-weight: 500;
+    font-weight: 700;
     font-size: 1rem;
     outline: none;
     cursor: pointer;
