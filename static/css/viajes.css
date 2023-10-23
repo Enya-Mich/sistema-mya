@@ -5,9 +5,10 @@
 }
 
 body {
-    background-image: url('/static/img/background-5.jpeg');
-    background-size: cover;
-    background-repeat: no-repeat;
+  background-image: url('/static/img/background-5.jpeg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .degrase {
